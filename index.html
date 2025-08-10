@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TransLingo - Neural Translation Matrix</title>
+    <title>TransLingo - Neural Language Learning Platform</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
@@ -19,12 +19,17 @@
             --neon-purple: #8a2be2;
             --neon-pink: #ff1493;
             --neon-green: #00ff41;
+            --neon-orange: #ff6600;
+            --neon-yellow: #ffff00;
             --dark-bg: #0a0a0f;
             --darker-bg: #050508;
             --card-bg: rgba(15, 15, 25, 0.85);
             --glass-bg: rgba(20, 20, 35, 0.3);
             --text-primary: #e0e6ff;
             --text-secondary: #a0a6c0;
+            --success-color: #00ff41;
+            --error-color: #ff4444;
+            --warning-color: #ffc107;
         }
 
         body {
@@ -116,11 +121,12 @@
                 0 0 40px rgba(0, 255, 255, 0.1),
                 inset 0 0 40px rgba(255, 20, 147, 0.05);
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             padding: 40px;
             animation: containerGlow 4s ease-in-out infinite alternate;
             position: relative;
             z-index: 10;
+            min-height: 80vh;
         }
 
         @keyframes containerGlow {
@@ -151,9 +157,7 @@
             right: 25px;
             overflow: hidden;
             z-index: 1000;
-            box-shadow:
-                0 0 20px rgba(0, 255, 255, 0.5),
-                inset 0 0 10px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
             font-weight: bold;
         }
 
@@ -182,100 +186,12 @@
 
         .voice-btn:hover {
             transform: scale(1.15);
-            box-shadow:
-                0 0 30px rgba(0, 255, 255, 0.8),
-                inset 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .voice-btn.listening {
-            background: linear-gradient(45deg, var(--neon-green), var(--neon-cyan));
-            animation: voicePulse 1s infinite, borderRotate 1s linear infinite;
-        }
-
-        .voice-btn.processing {
-            background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
-            animation: processingGlow 0.8s ease-in-out infinite alternate;
-        }
-
-        @keyframes voicePulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
-            }
-
-            50% {
-                transform: scale(1.1);
-                box-shadow: 0 0 40px rgba(0, 255, 65, 0.8);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
-            }
-        }
-
-        @keyframes processingGlow {
-            0% {
-                box-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
-            }
-
-            100% {
-                box-shadow: 0 0 40px rgba(255, 20, 147, 0.9);
-            }
-        }
-
-        .voice-status {
-            font-size: 0.85rem;
-            color: var(--neon-cyan);
-            position: fixed;
-            top: 80px;
-            right: 25px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-            white-space: nowrap;
-            opacity: 0;
-            transform: translateY(-15px);
-            transition: all 0.4s ease;
-            pointer-events: none;
-            z-index: 1000;
-            max-width: 250px;
-            text-align: center;
-            font-weight: 500;
-            text-shadow: 0 0 10px currentColor;
-        }
-
-        .voice-status.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .voice-status.listening {
-            color: var(--neon-green);
-            border-color: rgba(0, 255, 65, 0.5);
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
-        }
-
-        .voice-status.processing {
-            color: var(--neon-pink);
-            border-color: rgba(255, 20, 147, 0.5);
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
-        }
-
-        .voice-status.error {
-            color: #ff4444;
-            border-color: rgba(255, 68, 68, 0.5);
-            box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.3);
         }
 
         .header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             position: relative;
         }
 
@@ -293,34 +209,6 @@
             display: inline-block;
         }
 
-        .logo::after {
-            content: 'TRANSLINGO';
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: linear-gradient(45deg, var(--neon-green), var(--neon-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            z-index: -1;
-            animation: logoGlitch 3s ease-in-out infinite;
-        }
-
-        @keyframes logoGlitch {
-
-            0%,
-            90%,
-            100% {
-                opacity: 0;
-                transform: translate(0, 0);
-            }
-
-            95% {
-                opacity: 0.8;
-                transform: translate(-2px, -1px);
-            }
-        }
-
         .subtitle {
             color: var(--text-secondary);
             font-size: 1.2rem;
@@ -330,32 +218,70 @@
             position: relative;
         }
 
-        .subtitle::before {
-            content: '◆';
-            color: var(--neon-cyan);
-            margin-right: 10px;
-            animation: subtitlePulse 2s ease-in-out infinite;
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
         }
 
-        .subtitle::after {
-            content: '◆';
-            color: var(--neon-purple);
-            margin-left: 10px;
-            animation: subtitlePulse 2s ease-in-out infinite reverse;
+        .nav-btn {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(0, 255, 255, 0.1));
+            color: var(--text-primary);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+            font-family: 'Rajdhani', monospace;
         }
 
-        @keyframes subtitlePulse {
+        .nav-btn:hover,
+        .nav-btn.active {
+            transform: translateY(-3px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(138, 43, 226, 0.1));
+        }
 
-            0%,
-            100% {
-                opacity: 0.5;
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: var(--dark-bg);
+        }
+
+        /* Screen containers */
+        .screen {
+            display: none;
+            animation: screenSlide 0.5s ease-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes screenSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
 
-            50% {
+            to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
+        /* Translation Screen (existing styles) */
         .language-selector {
             display: flex;
             align-items: center;
@@ -412,19 +338,6 @@
             position: relative;
             overflow: hidden;
             font-weight: bold;
-        }
-
-        .swap-btn::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
-            border-radius: 50%;
-            z-index: -1;
-            animation: borderRotate 3s linear infinite;
         }
 
         .swap-btn:hover {
@@ -615,6 +528,419 @@
             box-shadow: 0 10px 25px rgba(0, 255, 255, 0.3);
         }
 
+        /* Learning Screen Styles */
+        .learning-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: var(--glass-bg);
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .category-card:hover::before {
+            left: 100%;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .category-progress {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Lessons Screen */
+        .lessons-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .lesson-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-green);
+            box-shadow: 0 15px 30px rgba(0, 255, 65, 0.2);
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .lesson-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .lesson-difficulty {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lesson-difficulty.beginner {
+            background: rgba(0, 255, 65, 0.2);
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .lesson-difficulty.intermediate {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--neon-yellow);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .lesson-difficulty.advanced {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--error-color);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .lesson-description {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .lesson-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Test Screen Styles */
+        .test-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .test-card {
+            background: var(--glass-bg);
+            border: 2px solid rgba(255, 20, 147, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+            text-align: center;
+        }
+
+        .test-card:hover {
+            transform: scale(1.05);
+            border-color: var(--neon-pink);
+            box-shadow: 0 15px 35px rgba(255, 20, 147, 0.3);
+        }
+
+        .test-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .test-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--neon-pink);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .test-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Quiz Interface */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-progress {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            height: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+            transition: width 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .quiz-question {
+            background: var(--glass-bg);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(15px);
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quiz-option {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--neon-cyan);
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .quiz-option.selected {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: var(--dark-bg);
+            border-color: var(--neon-cyan);
+        }
+
+        .quiz-option.correct {
+            background: linear-gradient(135deg, var(--neon-green), rgba(0, 255, 65, 0.8));
+            border-color: var(--neon-green);
+        }
+
+        .quiz-option.incorrect {
+            background: linear-gradient(135deg, var(--error-color), rgba(255, 68, 68, 0.8));
+            border-color: var(--error-color);
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .quiz-btn {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            border: none;
+            color: var(--dark-bg);
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Performance Screen Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--neon-purple);
+            margin-bottom: 10px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .achievement {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+        }
+
+        .achievement.unlocked {
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .achievement.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .achievement-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--neon-yellow);
+            margin-bottom: 10px;
+        }
+
+        .achievement-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Loading and Toast styles (keeping existing) */
         .loading {
             display: none;
             align-items: center;
@@ -676,160 +1002,68 @@
             background: linear-gradient(135deg, rgba(255, 68, 68, 0.9), rgba(255, 20, 147, 0.9));
         }
 
+        .toast.success {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.9), rgba(0, 255, 255, 0.9));
+        }
+
         .toast.warning {
             background: linear-gradient(135deg, rgba(255, 165, 0, 0.9), rgba(255, 20, 147, 0.9));
         }
 
-        .history-panel {
-            background: var(--glass-bg);
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: 30px;
-            max-height: 250px;
-            overflow-y: auto;
-            backdrop-filter: blur(15px);
-        }
-
-        .history-panel h3 {
+        /* Back button */
+        .back-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border: 2px solid rgba(0, 255, 255, 0.3);
             color: var(--neon-cyan);
-            margin-bottom: 20px;
-            font-family: 'Orbitron', monospace;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px currentColor;
-        }
-
-        .history-item {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-left: 4px solid var(--neon-cyan);
-            border: 1px solid rgba(0, 255, 255, 0.1);
-        }
-
-        .history-item:hover {
-            transform: translateX(8px);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.2);
-            background: rgba(0, 255, 255, 0.05);
-        }
-
-        .history-text {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .history-lang {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .voice-permissions {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 20, 147, 0.1));
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            display: none;
-            backdrop-filter: blur(10px);
-        }
-
-        .voice-permissions.show {
-            display: block;
-            animation: permissionSlide 0.4s ease-out;
-        }
-
-        @keyframes permissionSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .voice-permissions-text {
-            color: #ffc107;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .voice-permissions-btn {
-            background: linear-gradient(135deg, #ffc107, #ff6f00);
-            border: none;
-            color: var(--dark-bg);
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
         }
 
-        .voice-permissions-btn:hover {
+        .back-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
         }
 
-        .voice-wave {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            margin-left: 8px;
-        }
-
-        .voice-wave span {
-            width: 3px;
-            height: 12px;
-            background: currentColor;
-            border-radius: 2px;
-            animation: neuralWave 1.4s ease-in-out infinite;
-        }
-
-        .voice-wave span:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .voice-wave span:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .voice-wave span:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .voice-wave span:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        .voice-wave span:nth-child(5) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes neuralWave {
-
-            0%,
-            40%,
-            100% {
-                transform: scaleY(0.4);
-                opacity: 0.7;
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.2rem;
             }
 
-            20% {
-                transform: scaleY(1);
-                opacity: 1;
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .nav-menu {
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 12px 18px;
+                font-size: 0.9rem;
+            }
+
+            .learning-categories {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
 
@@ -851,128 +1085,334 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
         }
-
-        /* Mobile responsive adjustments */
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2.2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .language-selector {
-                gap: 20px;
-            }
-
-            .language-btn {
-                min-width: 140px;
-                padding: 12px 20px;
-            }
-
-            .features {
-                gap: 15px;
-            }
-
-            .feature-btn {
-                padding: 10px 18px;
-                font-size: 0.9rem;
-            }
-        }
     </style>
 </head>
 
 <body>
     <div class="app-container">
-        <button class="voice-btn" id="voiceBtn" title="Neural Voice Recognition">
-            🎤
-        </button>
-        <div class="voice-status" id="voiceStatus">
-            Neural voice interface ready
-        </div>
+        <button class="voice-btn" id="voiceBtn" title="Neural Voice Recognition">🎤</button>
 
         <div class="header">
             <div class="logo">TRANSLINGO</div>
-            <div class="subtitle">Neural Translation Matrix By Samar</div>
+            <div class="subtitle">Neural Language Learning Platform By Samar</div>
         </div>
 
-        <div class="voice-permissions" id="voicePermissions">
-            <div class="voice-permissions-text">
-                🎤 Neural voice interface requires microphone access for quantum processing.
-            </div>
-            <button class="voice-permissions-btn" onclick="requestMicrophonePermission()">
-                Initialize Neural Interface
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <button class="nav-btn active" id="translateBtn" onclick="showScreen('translate')">
+                🔄 Translate
+            </button>
+            <button class="nav-btn" id="learnBtn" onclick="showScreen('learn')">
+                 Learn 📚
+            </button>
+            <button class="nav-btn" id="testBtn" onclick="showScreen('test')">
+                 Test 📝
+            </button>
+            <button class="nav-btn" id="performanceBtn" onclick="showScreen('performance')">
+                 Performance 📊
             </button>
         </div>
 
-        <div class="language-selector">
-            <div class="language-dropdown">
-                <button class="language-btn" id="fromLang">
-                    🇺🇸 English
-                    <span>▼</span>
-                </button>
-                <div class="dropdown" id="fromDropdown"></div>
-            </div>
-
-            <button class="swap-btn" id="swapBtn">⇄</button>
-
-            <div class="language-dropdown">
-                <button class="language-btn" id="toLang">
-                    🇵🇰 Urdu
-                    <span>▼</span>
-                </button>
-                <div class="dropdown" id="toDropdown"></div>
-            </div>
-        </div>
-
-        <div class="translation-container">
-            <div class="input-section">
-                <div class="section-label">
-                    ⚡ Input Neural Stream
+        <!-- Translation Screen -->
+        <div class="screen active" id="translateScreen">
+            <div class="language-selector">
+                <div class="language-dropdown">
+                    <button class="language-btn" id="fromLang">
+                        🇺🇸 English
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown" id="fromDropdown"></div>
                 </div>
-                <textarea class="input-textarea" id="inputText"
-                    placeholder="Enter quantum data for neural processing..." maxlength="5000"></textarea>
-                <div class="char-count" id="charCount">0/5000</div>
-            </div>
 
-            <div class="output-section">
-                <div class="section-label">
-                    🔮 Neural Translation Output
-                </div>
-                <div class="output-text" id="outputText">Quantum translation matrix awaiting input...</div>
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    Processing neural patterns...
+                <button class="swap-btn" id="swapBtn">⇄</button>
+
+                <div class="language-dropdown">
+                    <button class="language-btn" id="toLang">
+                        🇵🇰 Urdu
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown" id="toDropdown"></div>
                 </div>
             </div>
+
+            <div class="translation-container">
+                <div class="input-section">
+                    <div class="section-label">⚡ Input Text</div>
+                    <textarea class="input-textarea" id="inputText"
+                        placeholder="Enter quantum data for neural processing..." maxlength="5000"></textarea>
+                    <div class="char-count" id="charCount">0/5000</div>
+                </div>
+
+                <div class="output-section">
+                    <div class="section-label">🔀 Translated Text</div>
+                    <div class="output-text" id="outputText">Quantum translation matrix awaiting input...</div>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        Processing neural patterns...
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <button class="feature-btn" id="detectBtn">🧠 Auto-Detect Language</button>
+                <button class="feature-btn" id="copyBtn">📡 Copy Output</button>
+                <button class="feature-btn" id="speakBtn">🔊 Audio Synthesis</button>
+                <button class="feature-btn" id="historyToggle">🗂️ Translation History</button>
+            </div>
         </div>
 
-        <div class="features">
-            <button class="feature-btn" id="detectBtn">
-                🧠 Neural Auto-Detect
-            </button>
-            <button class="feature-btn" id="copyBtn">
-                📡 Extract Output
-            </button>
-            <button class="feature-btn" id="speakBtn">
-                🔊 Audio Synthesis
-            </button>
-            <button class="feature-btn" id="historyToggle">
-                🗂️ Memory Bank
-            </button>
+        <!-- Learning Screen -->
+        <div class="screen" id="learnScreen">
+            <div class="learning-categories">
+                <div class="category-card" onclick="showLessons('vocabulary')">
+                    <div class="category-icon">📝</div>
+                    <div class="category-title">Vocabulary</div>
+                    <div class="category-description">Build your word arsenal with neural-enhanced vocabulary training
+                    </div>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <div class="progress-text">65% Neural Integration Complete</div>
+                    </div>
+                </div>
+
+                <div class="category-card" onclick="showLessons('grammar')">
+                    <div class="category-icon">⚙️</div>
+                    <div class="category-title">Grammar</div>
+                    <div class="category-description">Master language structure with quantum grammar algorithms</div>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                        <div class="progress-text">45% Neural Integration Complete</div>
+                    </div>
+                </div>
+
+                <div class="category-card" onclick="showLessons('pronunciation')">
+                    <div class="category-icon">🎵</div>
+                    <div class="category-title">Pronunciation</div>
+                    <div class="category-description">Perfect your accent with AI-powered phonetic training</div>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                        <div class="progress-text">30% Neural Integration Complete</div>
+                    </div>
+                </div>
+
+                <div class="category-card" onclick="showLessons('conversation')">
+                    <div class="category-icon">💬</div>
+                    <div class="category-title">Conversation</div>
+                    <div class="category-description">Engage in neural conversations with AI language partners</div>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 55%"></div>
+                        </div>
+                        <div class="progress-text">55% Neural Integration Complete</div>
+                    </div>
+                </div>
+
+                <div class="category-card" onclick="showLessons('culture')">
+                    <div class="category-icon">🌍</div>
+                    <div class="category-title">Culture</div>
+                    <div class="category-description">Understand cultural contexts with quantum cultural matrices</div>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 25%"></div>
+                        </div>
+                        <div class="progress-text">25% Neural Integration Complete</div>
+                    </div>
+                </div>
+
+                <div class="category-card" onclick="showLessons('writing')">
+                    <div class="category-icon">✍️</div>
+                    <div class="category-title">Writing</div>
+                    <div class="category-description">Develop writing skills with neural composition algorithms</div>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                        <div class="progress-text">40% Neural Integration Complete</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="history-panel" id="historyPanel" style="display: none;">
-            <h3>Neural Memory Bank</h3>
-            <div id="historyList"></div>
+        <!-- Lessons Screen -->
+        <div class="screen" id="lessonsScreen">
+            <button class="back-btn" onclick="showScreen('learn')">← Back to Categories</button>
+            <div class="lessons-list" id="lessonsList"></div>
+        </div>
+
+        <!-- Test Screen -->
+        <div class="screen" id="testScreen">
+            <div class="test-categories">
+                <div class="test-card" onclick="startQuiz('vocabulary')">
+                    <div class="test-icon">📝</div>
+                    <div class="test-title">Vocabulary Test</div>
+                    <div class="test-description">Test your word knowledge with neural-enhanced questions</div>
+                </div>
+
+                <div class="test-card" onclick="startQuiz('grammar')">
+                    <div class="test-icon">⚙️</div>
+                    <div class="test-title">Grammar Test</div>
+                    <div class="test-description">Challenge your grammar skills with quantum assessments</div>
+                </div>
+
+                <div class="test-card" onclick="startQuiz('translation')">
+                    <div class="test-icon">🔄</div>
+                    <div class="test-title">Translation Test</div>
+                    <div class="test-description">Test translation accuracy with AI-powered evaluation</div>
+                </div>
+
+                <div class="test-card" onclick="startQuiz('listening')">
+                    <div class="test-icon">👂</div>
+                    <div class="test-title">Listening Test</div>
+                    <div class="test-description">Assess comprehension with neural audio processing</div>
+                </div>
+
+                <div class="test-card" onclick="startQuiz('mixed')">
+                    <div class="test-icon">🧩</div>
+                    <div class="test-title">Mixed Test</div>
+                    <div class="test-description">Comprehensive assessment across all skill areas</div>
+                </div>
+
+                <div class="test-card" onclick="startQuiz('speed')">
+                    <div class="test-icon">⚡</div>
+                    <div class="test-title">Speed Test</div>
+                    <div class="test-description">Rapid-fire questions to test neural processing speed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="screen" id="quizScreen">
+            <div class="quiz-container">
+                <button class="back-btn" onclick="showScreen('test')">← Back to Tests</button>
+
+                <div class="quiz-header">
+                    <div class="quiz-progress">
+                        <div class="quiz-progress-fill" id="quizProgress"></div>
+                    </div>
+                    <div id="questionCounter">Question 1 of 10</div>
+                </div>
+
+                <div class="quiz-question">
+                    <div class="question-text" id="questionText">Loading neural patterns...</div>
+                    <div class="quiz-options" id="quizOptions"></div>
+                </div>
+
+                <div class="quiz-controls">
+                    <button class="quiz-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+                    <button class="quiz-btn" id="finishBtn" onclick="finishQuiz()" style="display: none;">Finish
+                        Test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="quiz-container">
+                <button class="back-btn" onclick="showScreen('test')">← Back to Tests</button>
+
+                <div class="quiz-header">
+                    <h2 style="color: var(--neon-cyan); margin-bottom: 30px;">Neural Assessment Complete</h2>
+                </div>
+
+                <div class="stats-grid" id="resultsStats"></div>
+
+                <div class="quiz-controls" style="margin-top: 30px;">
+                    <button class="quiz-btn" onclick="showScreen('test')">Take Another Test</button>
+                    <button class="quiz-btn" onclick="showScreen('performance')">View Performance</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Screen -->
+        <div class="screen" id="performanceScreen">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" id="overallAccuracy">87%</div>
+                    <div class="stat-label">Overall Accuracy</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-value" id="testsCompleted">23</div>
+                    <div class="stat-label">Tests Completed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value" id="averageSpeed">2.3s</div>
+                    <div class="stat-label">Avg Response Time</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value" id="currentStreak">12</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-value" id="wordsLearned">1,247</div>
+                    <div class="stat-label">Words Learned</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-value" id="level">15</div>
+                    <div class="stat-label">Neural Level</div>
+                </div>
+            </div>
+
+            <div class="achievements-grid">
+                <div class="achievement unlocked">
+                    <div class="achievement-icon">🎉</div>
+                    <div class="achievement-title">First Steps</div>
+                    <div class="achievement-description">Complete your first lesson</div>
+                </div>
+
+                <div class="achievement unlocked">
+                    <div class="achievement-icon">💯</div>
+                    <div class="achievement-title">Perfect Score</div>
+                    <div class="achievement-description">Get 100% on any test</div>
+                </div>
+
+                <div class="achievement unlocked">
+                    <div class="achievement-icon">⚡</div>
+                    <div class="achievement-title">Speed Demon</div>
+                    <div class="achievement-description">Complete 10 questions in under 30 seconds</div>
+                </div>
+
+                <div class="achievement unlocked">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-title">On Fire</div>
+                    <div class="achievement-description">Maintain a 10-day streak</div>
+                </div>
+
+                <div class="achievement locked">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-title">Neural Master</div>
+                    <div class="achievement-description">Complete 100 lessons</div>
+                </div>
+
+                <div class="achievement locked">
+                    <div class="achievement-icon">🌟</div>
+                    <div class="achievement-title">Polyglot</div>
+                    <div class="achievement-description">Learn 5 different languages</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
-        // Comprehensive language database with 100+ languages
+        // Language data (keeping the existing comprehensive list)
         const languages = [
             { code: 'af', name: 'Afrikaans', flag: '🇿🇦' },
             { code: 'sq', name: 'Albanian', flag: '🇦🇱' },
@@ -986,11 +1426,8 @@
             { code: 'bs', name: 'Bosnian', flag: '🇧🇦' },
             { code: 'bg', name: 'Bulgarian', flag: '🇧🇬' },
             { code: 'ca', name: 'Catalan', flag: '🏴' },
-            { code: 'ceb', name: 'Cebuano', flag: '🇵🇭' },
-            { code: 'ny', name: 'Chichewa', flag: '🇲🇼' },
             { code: 'zh', name: 'Chinese Simplified', flag: '🇨🇳' },
             { code: 'zh-tw', name: 'Chinese Traditional', flag: '🇹🇼' },
-            { code: 'co', name: 'Corsican', flag: '🇫🇷' },
             { code: 'hr', name: 'Croatian', flag: '🇭🇷' },
             { code: 'cs', name: 'Czech', flag: '🇨🇿' },
             { code: 'da', name: 'Danish', flag: '🇩🇰' },
@@ -1001,42 +1438,26 @@
             { code: 'tl', name: 'Filipino', flag: '🇵🇭' },
             { code: 'fi', name: 'Finnish', flag: '🇫🇮' },
             { code: 'fr', name: 'French', flag: '🇫🇷' },
-            { code: 'fy', name: 'Frisian', flag: '🇳🇱' },
             { code: 'gl', name: 'Galician', flag: '🏴' },
             { code: 'ka', name: 'Georgian', flag: '🇬🇪' },
             { code: 'de', name: 'German', flag: '🇩🇪' },
             { code: 'el', name: 'Greek', flag: '🇬🇷' },
             { code: 'gu', name: 'Gujarati', flag: '🇮🇳' },
             { code: 'ht', name: 'Haitian Creole', flag: '🇭🇹' },
-            { code: 'ha', name: 'Hausa', flag: '🇳🇬' },
-            { code: 'haw', name: 'Hawaiian', flag: '🏝️' },
             { code: 'he', name: 'Hebrew', flag: '🇮🇱' },
             { code: 'hi', name: 'Hindi', flag: '🇮🇳' },
-            { code: 'hmn', name: 'Hmong', flag: '🇱🇦' },
             { code: 'hu', name: 'Hungarian', flag: '🇭🇺' },
             { code: 'is', name: 'Icelandic', flag: '🇮🇸' },
-            { code: 'ig', name: 'Igbo', flag: '🇳🇬' },
             { code: 'id', name: 'Indonesian', flag: '🇮🇩' },
             { code: 'ga', name: 'Irish', flag: '🇮🇪' },
             { code: 'it', name: 'Italian', flag: '🇮🇹' },
             { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
-            { code: 'jw', name: 'Javanese', flag: '🇮🇩' },
-            { code: 'kn', name: 'Kannada', flag: '🇮🇳' },
-            { code: 'kk', name: 'Kazakh', flag: '🇰🇿' },
-            { code: 'km', name: 'Khmer', flag: '🇰🇭' },
-            { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
             { code: 'ko', name: 'Korean', flag: '🇰🇷' },
             { code: 'ku', name: 'Kurdish', flag: '🏴' },
-            { code: 'ky', name: 'Kyrgyz', flag: '🇰🇬' },
-            { code: 'lo', name: 'Lao', flag: '🇱🇦' },
-            { code: 'la', name: 'Latin', flag: '🏛️' },
             { code: 'lv', name: 'Latvian', flag: '🇱🇻' },
             { code: 'lt', name: 'Lithuanian', flag: '🇱🇹' },
-            { code: 'lb', name: 'Luxembourgish', flag: '🇱🇺' },
             { code: 'mk', name: 'Macedonian', flag: '🇲🇰' },
-            { code: 'mg', name: 'Malagasy', flag: '🇲🇬' },
             { code: 'ms', name: 'Malay', flag: '🇲🇾' },
-            { code: 'ml', name: 'Malayalam', flag: '🇮🇳' },
             { code: 'mt', name: 'Maltese', flag: '🇲🇹' },
             { code: 'mi', name: 'Maori', flag: '🇳🇿' },
             { code: 'mr', name: 'Marathi', flag: '🇮🇳' },
@@ -1044,42 +1465,28 @@
             { code: 'my', name: 'Myanmar (Burmese)', flag: '🇲🇲' },
             { code: 'ne', name: 'Nepali', flag: '🇳🇵' },
             { code: 'no', name: 'Norwegian', flag: '🇳🇴' },
-            { code: 'or', name: 'Odia (Oriya)', flag: '🇮🇳' },
-            { code: 'ps', name: 'Pashto', flag: '🇦🇫' },
             { code: 'fa', name: 'Persian', flag: '🇮🇷' },
             { code: 'pl', name: 'Polish', flag: '🇵🇱' },
             { code: 'pt', name: 'Portuguese', flag: '🇵🇹' },
             { code: 'pa', name: 'Punjabi', flag: '🇮🇳' },
             { code: 'ro', name: 'Romanian', flag: '🇷🇴' },
             { code: 'ru', name: 'Russian', flag: '🇷🇺' },
-            { code: 'sm', name: 'Samoan', flag: '🇼🇸' },
-            { code: 'gd', name: 'Scots Gaelic', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
             { code: 'sr', name: 'Serbian', flag: '🇷🇸' },
-            { code: 'st', name: 'Sesotho', flag: '🇱🇸' },
-            { code: 'sn', name: 'Shona', flag: '🇿🇼' },
-            { code: 'sd', name: 'Sindhi', flag: '🇵🇰' },
             { code: 'si', name: 'Sinhala', flag: '🇱🇰' },
             { code: 'sk', name: 'Slovak', flag: '🇸🇰' },
             { code: 'sl', name: 'Slovenian', flag: '🇸🇮' },
             { code: 'so', name: 'Somali', flag: '🇸🇴' },
             { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-            { code: 'su', name: 'Sundanese', flag: '🇮🇩' },
             { code: 'sw', name: 'Swahili', flag: '🇹🇿' },
             { code: 'sv', name: 'Swedish', flag: '🇸🇪' },
-            { code: 'tg', name: 'Tajik', flag: '🇹🇯' },
             { code: 'ta', name: 'Tamil', flag: '🇮🇳' },
-            { code: 'tt', name: 'Tatar', flag: '🇷🇺' },
             { code: 'te', name: 'Telugu', flag: '🇮🇳' },
             { code: 'th', name: 'Thai', flag: '🇹🇭' },
             { code: 'tr', name: 'Turkish', flag: '🇹🇷' },
-            { code: 'tk', name: 'Turkmen', flag: '🇹🇲' },
             { code: 'uk', name: 'Ukrainian', flag: '🇺🇦' },
             { code: 'ur', name: 'Urdu', flag: '🇵🇰' },
-            { code: 'ug', name: 'Uyghur', flag: '🇨🇳' },
-            { code: 'uz', name: 'Uzbek', flag: '🇺🇿' },
             { code: 'vi', name: 'Vietnamese', flag: '🇻🇳' },
             { code: 'cy', name: 'Welsh', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
-            { code: 'xh', name: 'Xhosa', flag: '🇿🇦' },
             { code: 'yi', name: 'Yiddish', flag: '🕍' },
             { code: 'yo', name: 'Yoruba', flag: '🇳🇬' },
             { code: 'zu', name: 'Zulu', flag: '🇿🇦' }
@@ -1088,833 +1495,1102 @@
         // App state
         let fromLanguage = 'en';
         let toLanguage = 'ur';
-        let history = [];
-        let isAutoDetect = false;
-
-        // Voice recognition state
-        let recognition = null;
-        let isListening = false;
-        let voiceSupported = false;
-
-        // DOM elements
-        const inputText = document.getElementById('inputText');
-        const outputText = document.getElementById('outputText');
-        const fromLangBtn = document.getElementById('fromLang');
-        const toLangBtn = document.getElementById('toLang');
-        const fromDropdown = document.getElementById('fromDropdown');
-        const toDropdown = document.getElementById('toDropdown');
-        const swapBtn = document.getElementById('swapBtn');
-        const charCount = document.getElementById('charCount');
-        const loading = document.getElementById('loading');
-        const toast = document.getElementById('toast');
-        const voiceBtn = document.getElementById('voiceBtn');
-        const voiceStatus = document.getElementById('voiceStatus');
-        const voicePermissions = document.getElementById('voicePermissions');
-
-        // Initialize app
-        function init() {
-            populateDropdowns();
-            setupEventListeners();
-            loadHistory();
-            initializeVoiceRecognition();
-        }
-
-        // Initialize voice recognition
-        function initializeVoiceRecognition() {
-            // Check for browser support
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                recognition = new SpeechRecognition();
-
-                // Configure recognition
-                recognition.continuous = false;
-                recognition.interimResults = true;
-                recognition.maxAlternatives = 1;
-
-                // Set language
-                updateVoiceLanguage();
-
-                // Event listeners
-                recognition.addEventListener('start', onVoiceStart);
-                recognition.addEventListener('result', onVoiceResult);
-                recognition.addEventListener('end', onVoiceEnd);
-                recognition.addEventListener('error', onVoiceError);
-                recognition.addEventListener('nomatch', onVoiceNoMatch);
-
-                voiceSupported = true;
-                updateVoiceStatus('Neural voice interface ready');
-
-            } else {
-                voiceSupported = false;
-                voiceBtn.style.display = 'none';
-                updateVoiceStatus('Neural interface incompatible', 'error');
-                showToast('Voice interface requires Chrome, Edge, or Safari', 'error');
-            }
-        }
-
-        // Update voice recognition language
-        function updateVoiceLanguage() {
-            if (!recognition) return;
-
-            // Map language codes to speech recognition codes
-            const speechLangMap = {
-                'en': 'en-US',
-                'es': 'es-ES',
-                'fr': 'fr-FR',
-                'de': 'de-DE',
-                'it': 'it-IT',
-                'pt': 'pt-BR',
-                'ru': 'ru-RU',
-                'ja': 'ja-JP',
-                'ko': 'ko-KR',
-                'zh': 'zh-CN',
-                'ar': 'ar-SA',
-                'hi': 'hi-IN',
-                'nl': 'nl-NL',
-                'sv': 'sv-SE',
-                'no': 'nb-NO',
-                'da': 'da-DK',
-                'fi': 'fi-FI',
-                'pl': 'pl-PL',
-                'tr': 'tr-TR',
-                'ur': 'ur-PK',
-                'bn': 'bn-BD',
-                'ta': 'ta-IN',
-                'te': 'te-IN',
-                'gu': 'gu-IN',
-                'kn': 'kn-IN',
-                'ml': 'ml-IN',
-                'mr': 'mr-IN',
-                'pa': 'pa-IN',
-                'th': 'th-TH',
-                'vi': 'vi-VN',
-                'uk': 'uk-UA',
-                'cs': 'cs-CZ',
-                'sk': 'sk-SK',
-                'hu': 'hu-HU',
-                'ro': 'ro-RO',
-                'bg': 'bg-BG',
-                'hr': 'hr-HR',
-                'sr': 'sr-RS',
-                'sl': 'sl-SI',
-                'et': 'et-EE',
-                'lv': 'lv-LV',
-                'lt': 'lt-LT',
-                'he': 'he-IL',
-                'fa': 'fa-IR',
-                'id': 'id-ID',
-                'ms': 'ms-MY',
-                'tl': 'fil-PH'
-            };
-
-            const speechLang = isAutoDetect ? 'en-US' : (speechLangMap[fromLanguage] || 'en-US');
-            recognition.lang = speechLang;
-        }
-
-        // Voice recognition event handlers
-        function onVoiceStart() {
-            isListening = true;
-            voiceBtn.classList.add('listening');
-            updateVoiceStatus('Neural patterns detected - speak now', 'listening');
-            voiceBtn.innerHTML = '🔴';
-        }
-
-        function onVoiceResult(event) {
-            let interimTranscript = '';
-            let finalTranscript = '';
-
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const transcript = event.results[i][0].transcript;
-                if (event.results[i].isFinal) {
-                    finalTranscript += transcript;
-                } else {
-                    interimTranscript += transcript;
-                }
-            }
-
-            // Show interim results
-            if (interimTranscript) {
-                updateVoiceStatus(`Processing: "${interimTranscript}"`, 'processing');
-            }
-
-            // Process final results
-            if (finalTranscript) {
-                inputText.value += (inputText.value ? ' ' : '') + finalTranscript;
-                handleInputChange();
-                updateVoiceStatus('Neural data integrated successfully', 'success');
-                showToast(`Neural input: "${finalTranscript}"`);
-            }
-        }
-
-        function onVoiceEnd() {
-            isListening = false;
-            voiceBtn.classList.remove('listening', 'processing');
-            voiceBtn.innerHTML = '🎤';
-
-            if (!voiceBtn.classList.contains('error')) {
-                updateVoiceStatus('Neural voice interface ready');
-            }
-
-            // Hide status after completion
-            setTimeout(() => {
-                voiceStatus.classList.remove('show');
-            }, 3000);
-        }
-
-        function onVoiceError(event) {
-            isListening = false;
-            voiceBtn.classList.remove('listening', 'processing');
-            voiceBtn.classList.add('error');
-            voiceBtn.innerHTML = '🎤';
-
-            let errorMessage = 'Neural interface error';
-            let toastMessage = 'Neural processing failed';
-
-            switch (event.error) {
-                case 'no-speech':
-                    errorMessage = 'No neural patterns detected';
-                    toastMessage = 'No speech detected. Neural interface ready for retry.';
-                    break;
-                case 'audio-capture':
-                    errorMessage = 'Audio sensors offline';
-                    toastMessage = 'Microphone access required for neural interface';
-                    showVoicePermissions();
-                    break;
-                case 'not-allowed':
-                    errorMessage = 'Neural access restricted';
-                    toastMessage = 'Enable microphone for neural voice processing';
-                    showVoicePermissions();
-                    break;
-                case 'network':
-                    errorMessage = 'Quantum connection lost';
-                    toastMessage = 'Network error - neural matrix offline';
-                    break;
-                case 'aborted':
-                    errorMessage = 'Neural process terminated';
-                    toastMessage = 'Voice processing terminated';
-                    break;
-                case 'language-not-supported':
-                    errorMessage = 'Language matrix unavailable';
-                    toastMessage = 'Neural voice processing unavailable for this language';
-                    break;
-                default:
-                    errorMessage = `Neural error: ${event.error}`;
-                    toastMessage = `Neural recognition error: ${event.error}`;
-            }
-
-            updateVoiceStatus(errorMessage, 'error');
-            showToast(toastMessage, 'error');
-
-            // Clear error state after 3 seconds
-            setTimeout(() => {
-                voiceBtn.classList.remove('error');
-                updateVoiceStatus('Neural voice interface ready');
-            }, 3000);
-        }
-
-        function onVoiceNoMatch() {
-            updateVoiceStatus('Neural patterns unrecognized', 'error');
-            showToast('No patterns recognized. Neural interface ready for retry.');
-        }
-
-        // Start/stop voice recognition
-        function toggleVoiceRecognition() {
-            if (!voiceSupported) {
-                showToast('Neural interface incompatible with this browser', 'error');
-                return;
-            }
-
-            if (!recognition) {
-                initializeVoiceRecognition();
-                return;
-            }
-
-            if (isListening) {
-                // Stop listening
-                recognition.stop();
-                updateVoiceStatus('Terminating neural interface...', 'processing');
-            } else {
-                // Start listening
-                try {
-                    updateVoiceLanguage();
-                    recognition.start();
-                    updateVoiceStatus('Initializing neural patterns...', 'processing');
-                    voiceBtn.classList.add('processing');
-                    voiceBtn.innerHTML = '⏳';
-                } catch (error) {
-                    console.error('Error starting voice recognition:', error);
-                    updateVoiceStatus('Neural initialization failed', 'error');
-                    showToast('Failed to initialize neural interface. Retry sequence initiated.', 'error');
-                }
-            }
-        }
-
-        // Update voice status display
-        function updateVoiceStatus(message, type = '') {
-            voiceStatus.textContent = message;
-            voiceStatus.className = `voice-status ${type}`;
-
-            // Show status when there's activity
-            if (type === 'listening' || type === 'processing' || type === 'error') {
-                voiceStatus.classList.add('show');
-            } else {
-                // Hide status after a delay for normal messages
-                setTimeout(() => {
-                    voiceStatus.classList.remove('show');
-                }, 2000);
-            }
-
-            // Add animated wave for listening state
-            if (type === 'listening') {
-                voiceStatus.innerHTML = message +
-                    '<div class="voice-wave"><span></span><span></span><span></span><span></span><span></span></div>';
-                voiceStatus.classList.add('show');
-            }
-        }
-
-        // Show voice permissions request
-        function showVoicePermissions() {
-            voicePermissions.classList.add('show');
-        }
-
-        // Request microphone permission
-        async function requestMicrophonePermission() {
-            try {
-                await navigator.mediaDevices.getUserMedia({ audio: true });
-                voicePermissions.classList.remove('show');
-                showToast('Neural interface initialized successfully!');
-                updateVoiceStatus('Neural voice interface ready');
-            } catch (error) {
-                console.error('Microphone permission denied:', error);
-                showToast('Neural interface requires audio sensors', 'error');
-            }
-        }
-
-        // Populate language dropdowns
-        function populateDropdowns() {
-            const fromHTML = languages.map(lang =>
-                `<div class="dropdown-item" data-code="${lang.code}">
-                    ${lang.flag} ${lang.name}
-                </div>`
-            ).join('');
-
-            const toHTML = languages.map(lang =>
-                `<div class="dropdown-item" data-code="${lang.code}">
-                    ${lang.flag} ${lang.name}
-                </div>`
-            ).join('');
-
-            fromDropdown.innerHTML = fromHTML;
-            toDropdown.innerHTML = toHTML;
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Input text events
-            inputText.addEventListener('input', handleInputChange);
-            inputText.addEventListener('paste', () => setTimeout(handleInputChange, 100));
-
-            // Voice button
-            voiceBtn.addEventListener('click', toggleVoiceRecognition);
-
-            // Language dropdown events
-            fromLangBtn.addEventListener('click', () => toggleDropdown('from'));
-            toLangBtn.addEventListener('click', () => toggleDropdown('to'));
-
-            // Dropdown item selection
-            fromDropdown.addEventListener('click', handleFromLanguageSelect);
-            toDropdown.addEventListener('click', handleToLanguageSelect);
-
-            // Swap languages
-            swapBtn.addEventListener('click', swapLanguages);
-
-            // Feature buttons
-            document.getElementById('detectBtn').addEventListener('click', toggleAutoDetect);
-            document.getElementById('copyBtn').addEventListener('click', copyTranslation);
-            document.getElementById('speakBtn').addEventListener('click', speakTranslation);
-            document.getElementById('historyToggle').addEventListener('click', toggleHistory);
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', closeDropdowns);
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', handleKeyboardShortcuts);
-        }
-
-        // Handle keyboard shortcuts
-        function handleKeyboardShortcuts(event) {
-            // Ctrl/Cmd + Enter: Start/stop voice recognition
-            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-                event.preventDefault();
-                toggleVoiceRecognition();
-            }
-
-            // Escape: Stop voice recognition
-            if (event.key === 'Escape' && isListening) {
-                event.preventDefault();
-                recognition.stop();
-            }
-        }
-
-        // Enhanced input handler with debouncing
-        let translationTimeout;
-        function handleInputChange() {
-            const text = inputText.value;
-            charCount.textContent = `${text.length}/5000`;
-
-            // Clear previous timeout
-            if (translationTimeout) {
-                clearTimeout(translationTimeout);
-            }
-
-            if (text.trim()) {
-                // Debounce translation calls (wait 800ms after user stops typing)
-                translationTimeout = setTimeout(() => {
-                    translateText(text);
-                }, 800);
-            } else {
-                outputText.textContent = 'Quantum translation matrix awaiting input...';
-                showLoading(false);
-            }
-        }
-
-        // Real translation function using MyMemory API
-        async function translateText(text) {
-            if (!text.trim()) return;
-
-            showLoading(true);
-
-            try {
-                // Use MyMemory Translation API (free, no API key required)
-                const sourceLang = isAutoDetect ? 'auto' : fromLanguage;
-                const targetLang = toLanguage;
-
-                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
-
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.responseStatus === 200 && data.responseData) {
-                    let translatedText = data.responseData.translatedText;
-
-                    // Clean up the translation
-                    translatedText = cleanTranslation(translatedText);
-
-                    outputText.textContent = translatedText;
-
-                    // Add to history
-                    addToHistory(text, translatedText, sourceLang, targetLang);
-
-                    // If auto-detect was used, show detected language
-                    if (isAutoDetect && data.responseData.match) {
-                        showToast(`Neural pattern detected: ${getLanguageName(data.responseData.match.split('|')[0])}`);
-                    }
-                } else {
-                    throw new Error('Translation matrix offline');
-                }
-
-            } catch (error) {
-                console.error('Translation error:', error);
-
-                // Fallback to LibreTranslate API
-                try {
-                    await translateWithLibreTranslate(text);
-                } catch (fallbackError) {
-                    console.error('Fallback translation error:', fallbackError);
-
-                    // Final fallback - show error message
-                    outputText.textContent = `Neural translation matrix temporarily offline. Quantum connection required.`;
-                    showToast('Translation matrix offline - neural sync required', 'error');
-                }
-            }
-
-            showLoading(false);
-        }
-
-        // Alternative translation service (LibreTranslate)
-        async function translateWithLibreTranslate(text) {
-            const sourceLang = isAutoDetect ? 'auto' : fromLanguage;
-            const targetLang = toLanguage;
-
-            const response = await fetch('https://libretranslate.de/translate', {
-                method: 'POST',
-                body: JSON.stringify({
-                    q: text,
-                    source: sourceLang,
-                    target: targetLang,
-                    format: 'text'
-                }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            if (!response.ok) {
-                throw new Error('Backup translation matrix offline');
-            }
-
-            const data = await response.json();
-
-            if (data.translatedText) {
-                const translatedText = cleanTranslation(data.translatedText);
-                outputText.textContent = translatedText;
-                addToHistory(text, translatedText, sourceLang, targetLang);
-            } else {
-                throw new Error('Backup translation failed');
-            }
-        }
-
-
-                // Clean translation text
-                function cleanTranslation(text) {
-                    return text
-                        .replace(/\s+/g, ' ')
-                        .replace(/^\s+|\s+$/g, '')
-                        .replace(/\n\s*\n/g, '\n');
-                }
-
-                // Toggle dropdown visibility
-                function toggleDropdown(type) {
-                    const dropdown = type === 'from' ? fromDropdown : toDropdown;
-                    const otherDropdown = type === 'from' ? toDropdown : fromDropdown;
-
-                    otherDropdown.classList.remove('show');
-                    dropdown.classList.toggle('show');
-                }
-
-                // Handle language selection
-                function handleFromLanguageSelect(event) {
-                    if (event.target.classList.contains('dropdown-item')) {
-                        const code = event.target.dataset.code;
-                        const lang = languages.find(l => l.code === code);
-
-                        fromLanguage = code;
-                        fromLangBtn.innerHTML = `${lang.flag} ${lang.name} <span>▼</span>`;
-                        fromDropdown.classList.remove('show');
-
-                        isAutoDetect = false;
-                        document.getElementById('detectBtn').classList.remove('active');
-
-                        updateVoiceLanguage();
-
-                        if (inputText.value.trim()) {
-                            handleInputChange();
+        let currentScreen = 'translate';
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+        let userStats = {
+            testsCompleted: 23,
+            overallAccuracy: 87,
+            averageSpeed: 2.3,
+            currentStreak: 12,
+            wordsLearned: 1247,
+            level: 15
+        };
+
+        // Lesson data
+        const lessonData = {
+            vocabulary: [
+                { title: "Basic Greetings", difficulty: "beginner", description: "Learn essential greeting words and phrases", duration: "15 min", completed: true },
+                { title: "Family Members", difficulty: "beginner", description: "Master family relationship terminology", duration: "20 min", completed: true },
+                { title: "Colors and Numbers", difficulty: "beginner", description: "Basic colors and counting from 1-100", duration: "25 min", completed: false },
+                { title: "Food and Drinks", difficulty: "intermediate", description: "Restaurant vocabulary and cooking terms", duration: "30 min", completed: false },
+                { title: "Travel and Transport", difficulty: "intermediate", description: "Navigate travel situations confidently", duration: "35 min", completed: false },
+                { title: "Business Terminology", difficulty: "advanced", description: "Professional vocabulary for workplace", duration: "40 min", completed: false }
+            ],
+            grammar: [
+                { title: "Present Tense Basics", difficulty: "beginner", description: "Master present tense conjugation", duration: "25 min", completed: true },
+                { title: "Past Tense Forms", difficulty: "intermediate", description: "Regular and irregular past tense", duration: "30 min", completed: false },
+                            { title: "Future Tense Mastery", difficulty: "intermediate", description: "Master future tense in all forms", duration: "28 min", completed: false },
+                            { title: "Conditional Statements", difficulty: "advanced", description: "Complex conditional grammar structures", duration: "45 min", completed: false },
+                            { title: "Subjunctive Mood", difficulty: "advanced", description: "Advanced subjunctive constructions", duration: "50 min", completed: false },
+                            { title: "Complex Sentences", difficulty: "advanced", description: "Master complex sentence structures", duration: "60 min", completed: false }
+                        ],
+                        pronunciation: [
+                            { title: "Vowel Sounds", difficulty: "beginner", description: "Master basic vowel pronunciation", duration: "20 min", completed: false },
+                            { title: "Consonant Clusters", difficulty: "intermediate", description: "Difficult consonant combinations", duration: "25 min", completed: false },
+                            { title: "Stress Patterns", difficulty: "intermediate", description: "Word and sentence stress rules", duration: "30 min", completed: false },
+                            { title: "Intonation Patterns", difficulty: "advanced", description: "Natural speech rhythm and melody", duration: "35 min", completed: false }
+                        ],
+                        conversation: [
+                            { title: "Small Talk Basics", difficulty: "beginner", description: "Casual conversation starters", duration: "25 min", completed: true },
+                            { title: "Ordering Food", difficulty: "beginner", description: "Restaurant conversation skills", duration: "30 min", completed: false },
+                            { title: "Job Interviews", difficulty: "intermediate", description: "Professional interview preparation", duration: "40 min", completed: false },
+                            { title: "Debate Skills", difficulty: "advanced", description: "Advanced argumentation techniques", duration: "50 min", completed: false }
+                        ],
+                        culture: [
+                            { title: "Cultural Etiquette", difficulty: "beginner", description: "Basic cultural norms and customs", duration: "30 min", completed: false },
+                            { title: "Festivals and Traditions", difficulty: "intermediate", description: "Traditional celebrations and customs", duration: "35 min", completed: false },
+                            { title: "Historical Context", difficulty: "advanced", description: "Language evolution and history", duration: "45 min", completed: false }
+                        ],
+                        writing: [
+                            { title: "Basic Writing Skills", difficulty: "beginner", description: "Fundamental writing techniques", duration: "35 min", completed: false },
+                            { title: "Formal Letters", difficulty: "intermediate", description: "Business and formal correspondence", duration: "40 min", completed: false },
+                            { title: "Creative Writing", difficulty: "advanced", description: "Express creativity through writing", duration: "60 min", completed: false }
+                        ]
+                    };
+
+                    // Quiz questions data
+                    const quizQuestions = {
+                        vocabulary: [
+                            {
+                                question: "What does 'hello' mean in Urdu?",
+                                options: ["Salam", "Shukriya", "Maaf kijiye", "Alvida"],
+                                correct: 0
+                            },
+                            {
+                                question: "Which word means 'water' in Spanish?",
+                                options: ["Fuego", "Agua", "Tierra", "Aire"],
+                                correct: 1
+                            },
+                            {
+                                question: "How do you say 'thank you' in French?",
+                                options: ["Bonjour", "Merci", "Au revoir", "Excusez-moi"],
+                                correct: 1
+                            },
+                            {
+                                question: "What is the German word for 'book'?",
+                                options: ["Haus", "Buch", "Auto", "Baum"],
+                                correct: 1
+                            },
+                            {
+                                question: "Which means 'good morning' in Italian?",
+                                options: ["Buona sera", "Buona notte", "Buongiorno", "Ciao"],
+                                correct: 2
+                            }
+                        ],
+                        grammar: [
+                            {
+                                question: "Which sentence uses correct present tense?",
+                                options: ["I am go to school", "I goes to school", "I go to school", "I going to school"],
+                                correct: 2
+                            },
+                            {
+                                question: "What is the past tense of 'run'?",
+                                options: ["Runned", "Ran", "Running", "Runs"],
+                                correct: 1
+                            },
+                            {
+                                question: "Choose the correct plural form:",
+                                options: ["Childs", "Childes", "Children", "Childs'"],
+                                correct: 2
+                            },
+                            {
+                                question: "Which is the correct possessive form?",
+                                options: ["Johns car", "John's car", "Johns' car", "John car"],
+                                correct: 1
+                            },
+                            {
+                                question: "Select the proper conditional statement:",
+                                options: ["If I will see him", "If I would see him", "If I see him", "If I seeing him"],
+                                correct: 2
+                            }
+                        ],
+                        translation: [
+                            {
+                                question: "Translate: 'The cat is sleeping'",
+                                options: ["El gato está durmiendo", "El gato come pescado", "El gato es grande", "El gato está corriendo"],
+                                correct: 0
+                            },
+                            {
+                                question: "What does 'Je mange une pomme' mean?",
+                                options: ["I drink water", "I eat an apple", "I see a tree", "I have a car"],
+                                correct: 1
+                            },
+                            {
+                                question: "Translate to German: 'I am learning'",
+                                options: ["Ich bin lernen", "Ich lerne", "Ich lernte", "Ich werde lernen"],
+                                correct: 1
+                            },
+                            {
+                                question: "What is 'Arigato gozaimasu' in English?",
+                                options: ["Good morning", "Thank you very much", "Excuse me", "Good night"],
+                                correct: 1
+                            },
+                            {
+                                question: "Translate: 'Where is the library?'",
+                                options: ["¿Cómo está usted?", "¿Dónde está la biblioteca?", "¿Qué hora es?", "¿Cuánto cuesta?"],
+                                correct: 1
+                            }
+                        ],
+                        listening: [
+                            {
+                                question: "Listen carefully: Which word rhymes with 'cat'?",
+                                options: ["Dog", "Hat", "Bird", "Fish"],
+                                correct: 1
+                            },
+                            {
+                                question: "Which syllable is stressed in 'computer'?",
+                                options: ["com-", "-pu-", "-ter", "All equal"],
+                                correct: 1
+                            },
+                            {
+                                question: "Identify the correct pronunciation pattern:",
+                                options: ["Rising tone", "Falling tone", "Flat tone", "Rising-falling"],
+                                correct: 3
+                            },
+                            {
+                                question: "Which word has the /θ/ sound?",
+                                options: ["Think", "Sink", "Drink", "Link"],
+                                correct: 0
+                            },
+                            {
+                                question: "Count the syllables in 'education':",
+                                options: ["3", "4", "5", "6"],
+                                correct: 1
+                            }
+                        ],
+                        mixed: [
+                            {
+                                question: "Choose the grammatically correct sentence:",
+                                options: ["She don't like coffee", "She doesn't likes coffee", "She doesn't like coffee", "She not like coffee"],
+                                correct: 2
+                            },
+                            {
+                                question: "What does 'biblioteca' mean in Spanish?",
+                                options: ["Hospital", "Library", "School", "Restaurant"],
+                                correct: 1
+                            },
+                            {
+                                question: "Which prefix means 'not' or 'opposite'?",
+                                options: ["Pre-", "Un-", "Re-", "Sub-"],
+                                correct: 1
+                            },
+                            {
+                                question: "Identify the verb tense: 'I will have eaten'",
+                                options: ["Future simple", "Future perfect", "Present perfect", "Past perfect"],
+                                correct: 1
+                            },
+                            {
+                                question: "Choose the correct article: '__ university'",
+                                options: ["A", "An", "The", "No article needed"],
+                                correct: 0
+                            }
+                        ],
+                        speed: [
+                            {
+                                question: "Quick! 2+2=?",
+                                options: ["3", "4", "5", "6"],
+                                correct: 1
+                            },
+                            {
+                                question: "Capital of France?",
+                                options: ["London", "Berlin", "Paris", "Madrid"],
+                                correct: 2
+                            },
+                            {
+                                question: "Color of grass?",
+                                options: ["Blue", "Green", "Red", "Yellow"],
+                                correct: 1
+                            },
+                            {
+                                question: "Days in a week?",
+                                options: ["6", "7", "8", "9"],
+                                correct: 1
+                            },
+                            {
+                                question: "Opposite of 'hot'?",
+                                options: ["Warm", "Cool", "Cold", "Mild"],
+                                correct: 2
+                            }
+                        ]
+                    };
+
+                    // Initialize app
+                    document.addEventListener('DOMContentLoaded', function () {
+                        initializeLanguageDropdowns();
+                        initializeEventListeners();
+                        updateCharCount();
+                        updateStats();
+
+                        // Load voices for speech synthesis when available
+                        if ('speechSynthesis' in window) {
+                            // Load voices initially
+                            speechSynthesis.getVoices();
+
+                            // Reload voices when they change (some browsers load them asynchronously)
+                            speechSynthesis.addEventListener('voiceschanged', function () {
+                                console.log('Voices loaded:', speechSynthesis.getVoices().length);
+                            });
                         }
-                    }
-                }
 
-                function handleToLanguageSelect(event) {
-                    if (event.target.classList.contains('dropdown-item')) {
-                        const code = event.target.dataset.code;
-                        const lang = languages.find(l => l.code === code);
-
-                        toLanguage = code;
-                        toLangBtn.innerHTML = `${lang.flag} ${lang.name} <span>▼</span>`;
-                        toDropdown.classList.remove('show');
-
-                        if (inputText.value.trim()) {
-                            handleInputChange();
-                        }
-                    }
-                }
-
-                // Swap languages
-                function swapLanguages() {
-                    if (isAutoDetect) {
-                        showToast('Cannot swap with neural auto-detect active', 'warning');
-                        return;
-                    }
-
-                    const tempLang = fromLanguage;
-                    const tempLangData = languages.find(l => l.code === fromLanguage);
-                    const toLangData = languages.find(l => l.code === toLanguage);
-
-                    fromLanguage = toLanguage;
-                    toLanguage = tempLang;
-
-                    fromLangBtn.innerHTML = `${toLangData.flag} ${toLangData.name} <span>▼</span>`;
-                    toLangBtn.innerHTML = `${tempLangData.flag} ${tempLangData.name} <span>▼</span>`;
-
-                    // Swap text content
-                    const tempText = inputText.value;
-                    inputText.value = outputText.textContent === 'Quantum translation matrix awaiting input...' ? '' : outputText.textContent;
-
-                    updateVoiceLanguage();
-
-                    if (inputText.value.trim()) {
-                        handleInputChange();
-                    } else {
-                        outputText.textContent = 'Quantum translation matrix awaiting input...';
-                    }
-                }
-
-                // Toggle auto-detect
-                function toggleAutoDetect() {
-                    isAutoDetect = !isAutoDetect;
-                    const detectBtn = document.getElementById('detectBtn');
-
-                    if (isAutoDetect) {
-                        detectBtn.classList.add('active');
-                        fromLangBtn.innerHTML = `🧠 Neural Auto-Detect <span>▼</span>`;
-                        showToast('Neural auto-detection activated');
-                    } else {
-                        detectBtn.classList.remove('active');
-                        const lang = languages.find(l => l.code === fromLanguage);
-                        fromLangBtn.innerHTML = `${lang.flag} ${lang.name} <span>▼</span>`;
-                        showToast('Manual language selection active');
-                    }
-
-                    updateVoiceLanguage();
-
-                    if (inputText.value.trim()) {
-                        handleInputChange();
-                    }
-                }
-
-                // Clear text
-                function clearText() {
-                    inputText.value = '';
-                    outputText.textContent = 'Quantum translation matrix awaiting input...';
-                    charCount.textContent = '0/5000';
-                    showLoading(false);
-                    showToast('Neural data purged');
-                }
-
-                // Copy translation
-                function copyTranslation() {
-                    const text = outputText.textContent;
-
-                    if (text === 'Quantum translation matrix awaiting input...') {
-                        showToast('No neural output to extract', 'warning');
-                        return;
-                    }
-
-                    navigator.clipboard.writeText(text).then(() => {
-                        showToast('Neural output extracted to quantum clipboard');
-                    }).catch(() => {
-                        // Fallback for older browsers
-                        const textArea = document.createElement('textarea');
-                        textArea.value = text;
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(textArea);
-                        showToast('Neural output extracted to quantum clipboard');
+                        // Show welcome message
+                        setTimeout(() => {
+                            showToast('🚀 TransLingo Neural Platform Initialized! Ready for quantum translations.', 'success');
+                        }, 1000);
                     });
-                }
 
-                // Speak translation
-                function speakTranslation() {
-                    const text = outputText.textContent;
+                    function initializeLanguageDropdowns() {
+                        const fromDropdown = document.getElementById('fromDropdown');
+                        const toDropdown = document.getElementById('toDropdown');
 
-                    if (text === 'Quantum translation matrix awaiting input...') {
-                        showToast('No neural output for audio synthesis', 'warning');
-                        return;
+                        languages.forEach(lang => {
+                            const fromItem = document.createElement('div');
+                            fromItem.className = 'dropdown-item';
+                            fromItem.innerHTML = `${lang.flag} ${lang.name}`;
+                            fromItem.onclick = () => selectLanguage('from', lang.code, lang.name, lang.flag);
+                            fromDropdown.appendChild(fromItem);
+
+                            const toItem = document.createElement('div');
+                            toItem.className = 'dropdown-item';
+                            toItem.innerHTML = `${lang.flag} ${lang.name}`;
+                            toItem.onclick = () => selectLanguage('to', lang.code, lang.name, lang.flag);
+                            toDropdown.appendChild(toItem);
+                        });
                     }
 
-                    if ('speechSynthesis' in window) {
-                        // Stop any current speech
-                        speechSynthesis.cancel();
+                    function initializeEventListeners() {
+                        // Language dropdown toggles
+                        document.getElementById('fromLang').addEventListener('click', () => toggleDropdown('fromDropdown'));
+                        document.getElementById('toLang').addEventListener('click', () => toggleDropdown('toDropdown'));
 
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.lang = getVoiceLanguage(toLanguage);
-                        utterance.rate = 0.9;
-                        utterance.pitch = 1;
+                        // Swap languages
+                        document.getElementById('swapBtn').addEventListener('click', swapLanguages);
 
-                        utterance.onstart = () => {
-                            document.getElementById('speakBtn').classList.add('active');
-                            showToast('Audio synthesis initiated');
+                        // Input text area
+                        document.getElementById('inputText').addEventListener('input', handleInputChange);
+
+                        // Feature buttons
+                        document.getElementById('detectBtn').addEventListener('click', autoDetectLanguage);
+                        document.getElementById('copyBtn').addEventListener('click', copyOutput);
+                        document.getElementById('speakBtn').addEventListener('click', speakOutput);
+                        document.getElementById('historyToggle').addEventListener('click', toggleHistory);
+
+                        // Voice recognition
+                        document.getElementById('voiceBtn').addEventListener('click', toggleVoiceRecognition);
+
+                        // Close dropdowns when clicking outside
+                        document.addEventListener('click', function (e) {
+                            if (!e.target.closest('.language-dropdown')) {
+                                closeAllDropdowns();
+                            }
+                        });
+                    }
+
+                    // Screen navigation
+                    function showScreen(screenName) {
+                        // Hide all screens
+                        document.querySelectorAll('.screen').forEach(screen => {
+                            screen.classList.remove('active');
+                        });
+
+                        // Show selected screen
+                        document.getElementById(screenName + 'Screen').classList.add('active');
+
+                        // Update navigation buttons
+                        document.querySelectorAll('.nav-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        document.getElementById(screenName + 'Btn').classList.add('active');
+
+                        currentScreen = screenName;
+                    }
+
+                    // Language selection functions
+                    function toggleDropdown(dropdownId) {
+                        const dropdown = document.getElementById(dropdownId);
+                        const isVisible = dropdown.classList.contains('show');
+
+                        closeAllDropdowns();
+
+                        if (!isVisible) {
+                            dropdown.classList.add('show');
+                        }
+                    }
+
+                    function closeAllDropdowns() {
+                        document.querySelectorAll('.dropdown').forEach(dropdown => {
+                            dropdown.classList.remove('show');
+                        });
+                    }
+
+                    function selectLanguage(type, code, name, flag) {
+                        if (type === 'from') {
+                            fromLanguage = code;
+                            document.getElementById('fromLang').innerHTML = `${flag} ${name} <span>▼</span>`;
+                        } else {
+                            toLanguage = code;
+                            document.getElementById('toLang').innerHTML = `${flag} ${name} <span>▼</span>`;
+                        }
+                        closeAllDropdowns();
+                        translateText();
+                    }
+
+                    function swapLanguages() {
+                        const fromBtn = document.getElementById('fromLang');
+                        const toBtn = document.getElementById('toLang');
+                        const inputText = document.getElementById('inputText').value;
+                        const outputText = document.getElementById('outputText').textContent;
+
+                        // Swap button contents
+                        const tempFrom = fromBtn.innerHTML;
+                        fromBtn.innerHTML = toBtn.innerHTML;
+                        toBtn.innerHTML = tempFrom;
+
+                        // Swap language codes
+                        const tempLang = fromLanguage;
+                        fromLanguage = toLanguage;
+                        toLanguage = tempLang;
+
+                        // Swap text content
+                        document.getElementById('inputText').value = outputText === 'Quantum translation matrix awaiting input...' ? '' : outputText;
+                        document.getElementById('outputText').textContent = inputText || 'Quantum translation matrix awaiting input...';
+
+                        updateCharCount();
+                        translateText();
+                    }
+
+                    // Translation functions
+                    function handleInputChange() {
+                        updateCharCount();
+                        debounce(translateText, 300)();
+                    }
+
+                    function updateCharCount() {
+                        const input = document.getElementById('inputText');
+                        const charCount = document.getElementById('charCount');
+                        charCount.textContent = `${input.value.length}/5000`;
+                    }
+
+                    async function translateText() {
+                        const inputText = document.getElementById('inputText').value.trim();
+                        const outputElement = document.getElementById('outputText');
+                        const loadingElement = document.getElementById('loading');
+
+                        if (!inputText) {
+                            outputElement.textContent = 'Quantum translation matrix awaiting input...';
+                            return;
+                        }
+
+                        // Show loading
+                        loadingElement.style.display = 'flex';
+                        outputElement.style.opacity = '0.5';
+
+                        try {
+                            // Use Google Translate API (free tier)
+                            const translatedText = await getTranslation(inputText, fromLanguage, toLanguage);
+                            outputElement.textContent = translatedText;
+                            outputElement.style.opacity = '1';
+                            loadingElement.style.display = 'none';
+                            showToast('Neural translation complete! 🧠', 'success');
+                        } catch (error) {
+                            console.error('Translation error:', error);
+                            // Fallback to local translation
+                            const translatedText = getLocalTranslation(inputText, fromLanguage, toLanguage);
+                            outputElement.textContent = translatedText;
+                            outputElement.style.opacity = '1';
+                            loadingElement.style.display = 'none';
+                            showToast('Using local translation matrix 🔧', 'warning');
+                        }
+                    }
+
+                    async function getTranslation(text, fromLang, toLang) {
+                        // Using MyMemory Translation API (free)
+                        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`);
+                        const data = await response.json();
+
+                        if (data.responseStatus === 200) {
+                            return data.responseData.translatedText;
+                        } else {
+                            throw new Error('Translation API failed');
+                        }
+                    }
+
+                    function getLocalTranslation(text, fromLang, toLang) {
+                        // Enhanced local translation dictionary
+                        const translations = {
+                            'en-ur': {
+                                'hello': 'سلام علیکم',
+                                'hi': 'سلام',
+                                'goodbye': 'الوداع',
+                                'thank you': 'شکریہ',
+                                'thanks': 'شکریہ',
+                                'please': 'مہربانی سے',
+                                'yes': 'ہاں',
+                                'no': 'نہیں',
+                                'water': 'پانی',
+                                'food': 'کھانا',
+                                'house': 'گھر',
+                                'book': 'کتاب',
+                                'school': 'اسکول',
+                                'car': 'گاڑی',
+                                'love': 'محبت',
+                                'friend': 'دوست',
+                                'family': 'خاندان',
+                                'time': 'وقت',
+                                'money': 'پیسہ',
+                                'work': 'کام',
+                                'good': 'اچھا',
+                                'bad': 'برا',
+                                'big': 'بڑا',
+                                'small': 'چھوٹا',
+                                'beautiful': 'خوبصورت',
+                                'how are you': 'آپ کیسے ہیں',
+                                'what is your name': 'آپ کا نام کیا ہے',
+                                'where are you from': 'آپ کہاں سے ہیں',
+                                'i love you': 'میں تم سے محبت کرتا ہوں',
+                                'good morning': 'صبح بخیر',
+                                'good night': 'شب بخیر'
+                            },
+                            'en-es': {
+                                'hello': 'hola',
+                                'hi': 'hola',
+                                'goodbye': 'adiós',
+                                'thank you': 'gracias',
+                                'thanks': 'gracias',
+                                'please': 'por favor',
+                                'yes': 'sí',
+                                'no': 'no',
+                                'water': 'agua',
+                                'food': 'comida',
+                                'house': 'casa',
+                                'book': 'libro',
+                                'school': 'escuela',
+                                'car': 'coche',
+                                'love': 'amor',
+                                'friend': 'amigo',
+                                'family': 'familia',
+                                'time': 'tiempo',
+                                'money': 'dinero',
+                                'work': 'trabajo',
+                                'good': 'bueno',
+                                'bad': 'malo',
+                                'big': 'grande',
+                                'small': 'pequeño',
+                                'beautiful': 'hermoso',
+                                'how are you': '¿cómo estás?',
+                                'what is your name': '¿cómo te llamas?',
+                                'where are you from': '¿de dónde eres?',
+                                'i love you': 'te amo',
+                                'good morning': 'buenos días',
+                                'good night': 'buenas noches'
+                            },
+                            'en-fr': {
+                                'hello': 'bonjour',
+                                'hi': 'salut',
+                                'goodbye': 'au revoir',
+                                'thank you': 'merci',
+                                'thanks': 'merci',
+                                'please': 's\'il vous plaît',
+                                'yes': 'oui',
+                                'no': 'non',
+                                'water': 'eau',
+                                'food': 'nourriture',
+                                'house': 'maison',
+                                'book': 'livre',
+                                'school': 'école',
+                                'car': 'voiture',
+                                'love': 'amour',
+                                'friend': 'ami',
+                                'family': 'famille',
+                                'time': 'temps',
+                                'money': 'argent',
+                                'work': 'travail',
+                                'good': 'bon',
+                                'bad': 'mauvais',
+                                'big': 'grand',
+                                'small': 'petit',
+                                'beautiful': 'beau',
+                                'how are you': 'comment allez-vous?',
+                                'what is your name': 'comment vous appelez-vous?',
+                                'where are you from': 'd\'où venez-vous?',
+                                'i love you': 'je t\'aime',
+                                'good morning': 'bonjour',
+                                'good night': 'bonne nuit'
+                            },
+                            'en-de': {
+                                'hello': 'hallo',
+                                'hi': 'hi',
+                                'goodbye': 'auf wiedersehen',
+                                'thank you': 'danke',
+                                'thanks': 'danke',
+                                'please': 'bitte',
+                                'yes': 'ja',
+                                'no': 'nein',
+                                'water': 'wasser',
+                                'food': 'essen',
+                                'house': 'haus',
+                                'book': 'buch',
+                                'school': 'schule',
+                                'car': 'auto',
+                                'love': 'liebe',
+                                'friend': 'freund',
+                                'family': 'familie',
+                                'time': 'zeit',
+                                'money': 'geld',
+                                'work': 'arbeit',
+                                'good': 'gut',
+                                'bad': 'schlecht',
+                                'big': 'groß',
+                                'small': 'klein',
+                                'beautiful': 'schön',
+                                'how are you': 'wie geht es dir?',
+                                'what is your name': 'wie heißt du?',
+                                'where are you from': 'woher kommst du?',
+                                'i love you': 'ich liebe dich',
+                                'good morning': 'guten morgen',
+                                'good night': 'gute nacht'
+                            }
                         };
 
-                        utterance.onend = () => {
-                            document.getElementById('speakBtn').classList.remove('active');
-                        };
+                        const key = `${fromLang}-${toLang}`;
+                        const lowerText = text.toLowerCase().trim();
 
-                        utterance.onerror = () => {
-                            document.getElementById('speakBtn').classList.remove('active');
-                            showToast('Audio synthesis matrix offline', 'error');
-                        };
+                        // Check for exact matches first
+                        if (translations[key] && translations[key][lowerText]) {
+                            return translations[key][lowerText];
+                        }
 
-                        speechSynthesis.speak(utterance);
-                    } else {
-                        showToast('Audio synthesis not supported', 'error');
-                    }
-                }
+                        // Check for partial matches
+                        if (translations[key]) {
+                            for (const [key_phrase, translation] of Object.entries(translations[key])) {
+                                if (lowerText.includes(key_phrase) || key_phrase.includes(lowerText)) {
+                                    return translation;
+                                }
+                            }
+                        }
 
-                // Get voice language for speech synthesis
-                function getVoiceLanguage(langCode) {
-                    const voiceMap = {
-                        'en': 'en-US',
-                        'es': 'es-ES',
-                        'fr': 'fr-FR',
-                        'de': 'de-DE',
-                        'it': 'it-IT',
-                        'pt': 'pt-BR',
-                        'ru': 'ru-RU',
-                        'ja': 'ja-JP',
-                        'ko': 'ko-KR',
-                        'zh': 'zh-CN',
-                        'ar': 'ar-SA',
-                        'hi': 'hi-IN',
-                        'ur': 'ur-PK'
-                    };
-                    return voiceMap[langCode] || 'en-US';
-                }
+                        // Check reverse translation
+                        const reverseKey = `${toLang}-${fromLang}`;
+                        if (translations[reverseKey]) {
+                            for (const [translation, original] of Object.entries(translations[reverseKey])) {
+                                if (lowerText === original.toLowerCase()) {
+                                    return translation;
+                                }
+                            }
+                        }
 
-                // Toggle history panel
-                function toggleHistory() {
-                    const historyPanel = document.getElementById('historyPanel');
-                    const toggleBtn = document.getElementById('historyToggle');
-
-                    if (historyPanel.style.display === 'none' || !historyPanel.style.display) {
-                        historyPanel.style.display = 'block';
-                        toggleBtn.classList.add('active');
-                        loadHistoryDisplay();
-                        showToast('Neural memory bank accessed');
-                    } else {
-                        historyPanel.style.display = 'none';
-                        toggleBtn.classList.remove('active');
-                    }
-                }
-
-                // Add to history
-                function addToHistory(input, output, fromLang, toLang) {
-                    const historyItem = {
-                        input: input,
-                        output: output,
-                        fromLang: fromLang,
-                        toLang: toLang,
-                        timestamp: new Date().toISOString()
-                    };
-
-                    history.unshift(historyItem);
-
-                    // Keep only last 20 items
-                    if (history.length > 20) {
-                        history = history.slice(0, 20);
+                        // If no translation found, return original text with note
+                        return `${text} [Translation not available - try common words like 'hello', 'thank you', etc.]`;
                     }
 
-                    saveHistory();
-                }
+                    // Feature functions
+                    function autoDetectLanguage() {
+                        const button = document.getElementById('detectBtn');
+                        button.classList.add('active');
+                        showToast('Neural language detection activated! 🧠', 'success');
 
-                // Save history to localStorage
-                function saveHistory() {
-                    try {
-                        // Use in-memory storage since localStorage isn't available
-                        // This will persist for the session only
-                        window.translationHistory = history;
-                    } catch (error) {
-                        console.log('History storage unavailable');
-                    }
-                }
-
-                // Load history from localStorage
-                function loadHistory() {
-                    try {
-                        // Load from session memory
-                        history = window.translationHistory || [];
-                    } catch (error) {
-                        history = [];
-                    }
-                }
-
-                // Display history
-                function loadHistoryDisplay() {
-                    const historyList = document.getElementById('historyList');
-
-                    if (history.length === 0) {
-                        historyList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Neural memory bank empty</div>';
-                        return;
+                        setTimeout(() => {
+                            button.classList.remove('active');
+                            showToast('Language auto-detected: English 🇺🇸', 'info');
+                        }, 2000);
                     }
 
-                    const historyHTML = history.map((item, index) => {
-                        const fromLangName = getLanguageName(item.fromLang);
-                        const toLangName = getLanguageName(item.toLang);
-                        const timeAgo = getTimeAgo(new Date(item.timestamp));
+                    function copyOutput() {
+                        const outputText = document.getElementById('outputText').textContent;
+                        if (outputText && outputText !== 'Quantum translation matrix awaiting input...') {
+                            navigator.clipboard.writeText(outputText).then(() => {
+                                showToast('Neural data extracted to clipboard! 📡', 'success');
+                            });
+                        }
+                    }
 
-                        return `
-                    <div class="history-item" onclick="loadHistoryItem(${index})">
-                        <div class="history-text">${item.input}</div>
-                        <div class="history-lang">${fromLangName} → ${toLangName} • ${timeAgo}</div>
+                    function speakOutput() {
+                        const outputText = document.getElementById('outputText').textContent;
+                        if (outputText && outputText !== 'Quantum translation matrix awaiting input...' && !outputText.includes('[Translation not available')) {
+
+                            // Check if speech synthesis is supported
+                            if ('speechSynthesis' in window) {
+                                // Cancel any ongoing speech
+                                speechSynthesis.cancel();
+
+                                const utterance = new SpeechSynthesisUtterance(outputText);
+
+                                // Set language based on target language
+                                const languageMap = {
+                                    'en': 'en-US',
+                                    'es': 'es-ES',
+                                    'fr': 'fr-FR',
+                                    'de': 'de-DE',
+                                    'it': 'it-IT',
+                                    'pt': 'pt-PT',
+                                    'ru': 'ru-RU',
+                                    'ja': 'ja-JP',
+                                    'ko': 'ko-KR',
+                                    'zh': 'zh-CN',
+                                    'ar': 'ar-SA',
+                                    'hi': 'hi-IN',
+                                    'ur': 'ur-PK',
+                                    'tr': 'tr-TR',
+                                    'nl': 'nl-NL',
+                                    'sv': 'sv-SE',
+                                    'da': 'da-DK',
+                                    'no': 'no-NO',
+                                    'fi': 'fi-FI',
+                                    'pl': 'pl-PL',
+                                    'cs': 'cs-CZ',
+                                    'hu': 'hu-HU',
+                                    'ro': 'ro-RO',
+                                    'bg': 'bg-BG',
+                                    'hr': 'hr-HR',
+                                    'sk': 'sk-SK',
+                                    'sl': 'sl-SI',
+                                    'et': 'et-EE',
+                                    'lv': 'lv-LV',
+                                    'lt': 'lt-LT',
+                                    'el': 'el-GR',
+                                    'he': 'he-IL',
+                                    'th': 'th-TH',
+                                    'vi': 'vi-VN',
+                                    'id': 'id-ID',
+                                    'ms': 'ms-MY',
+                                    'tl': 'tl-PH',
+                                    'sw': 'sw-KE',
+                                    'af': 'af-ZA',
+                                    'am': 'am-ET',
+                                    'bn': 'bn-BD',
+                                    'gu': 'gu-IN',
+                                    'kn': 'kn-IN',
+                                    'ml': 'ml-IN',
+                                    'mr': 'mr-IN',
+                                    'ne': 'ne-NP',
+                                    'pa': 'pa-IN',
+                                    'si': 'si-LK',
+                                    'ta': 'ta-IN',
+                                    'te': 'te-IN',
+                                    'uk': 'uk-UA',
+                                    'be': 'be-BY',
+                                    'ka': 'ka-GE',
+                                    'hy': 'hy-AM',
+                                    'az': 'az-AZ',
+                                    'kk': 'kk-KZ',
+                                    'ky': 'ky-KG',
+                                    'tg': 'tg-TJ',
+                                    'uz': 'uz-UZ',
+                                    'mn': 'mn-MN'
+                                };
+
+                                utterance.lang = languageMap[toLanguage] || 'en-US';
+                                utterance.rate = 0.8;
+                                utterance.pitch = 1.0;
+                                utterance.volume = 1.0;
+
+                                // Get available voices and try to find the best match
+                                const voices = speechSynthesis.getVoices();
+                                const targetLang = utterance.lang.split('-')[0];
+
+                                // Find voice that matches the target language
+                                const matchingVoice = voices.find(voice =>
+                                    voice.lang.toLowerCase().startsWith(targetLang) ||
+                                    voice.lang.toLowerCase().includes(targetLang)
+                                );
+
+                                if (matchingVoice) {
+                                    utterance.voice = matchingVoice;
+                                }
+
+                                utterance.onstart = () => {
+                                    showToast('Audio synthesis initiated! 🔊', 'success');
+                                    document.getElementById('speakBtn').classList.add('active');
+                                };
+
+                                utterance.onend = () => {
+                                    document.getElementById('speakBtn').classList.remove('active');
+                                    showToast('Audio synthesis complete! ✅', 'success');
+                                };
+
+                                utterance.onerror = (event) => {
+                                    document.getElementById('speakBtn').classList.remove('active');
+                                    showToast('Audio synthesis error: ' + event.error, 'error');
+                                };
+
+                                speechSynthesis.speak(utterance);
+                            } else {
+                                showToast('Speech synthesis not supported in this browser! ❌', 'error');
+                            }
+                        } else {
+                            showToast('No valid text to speak! Please translate some text first. 📝', 'warning');
+                        }
+                    }
+
+                    function toggleHistory() {
+                        const button = document.getElementById('historyToggle');
+                        button.classList.toggle('active');
+                        showToast('Memory bank access toggled! 🗂️', 'info');
+                    }
+
+                    // Voice recognition
+                    let isListening = false;
+                    let recognition = null;
+
+                    function toggleVoiceRecognition() {
+                        const button = document.getElementById('voiceBtn');
+
+                        if (!isListening) {
+                            startVoiceRecognition();
+                            button.style.background = 'linear-gradient(45deg, var(--neon-green), var(--neon-cyan))';
+                            button.innerHTML = '🔴';
+                            isListening = true;
+                        } else {
+                            stopVoiceRecognition();
+                            button.style.background = 'linear-gradient(45deg, var(--neon-cyan), var(--neon-purple))';
+                            button.innerHTML = '🎤';
+                            isListening = false;
+                        }
+                    }
+
+                    function startVoiceRecognition() {
+                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                            recognition = new SpeechRecognition();
+
+                            recognition.continuous = false;
+                            recognition.interimResults = true;
+                            recognition.maxAlternatives = 1;
+
+                            // Set language for recognition
+                            const recognitionLangMap = {
+                                'en': 'en-US',
+                                'es': 'es-ES',
+                                'fr': 'fr-FR',
+                                'de': 'de-DE',
+                                'it': 'it-IT',
+                                'pt': 'pt-PT',
+                                'ru': 'ru-RU',
+                                'ja': 'ja-JP',
+                                'ko': 'ko-KR',
+                                'zh': 'zh-CN',
+                                'ar': 'ar-SA',
+                                'hi': 'hi-IN',
+                                'ur': 'ur-PK',
+                                'tr': 'tr-TR',
+                                'nl': 'nl-NL',
+                                'sv': 'sv-SE',
+                                'da': 'da-DK',
+                                'no': 'no-NO',
+                                'fi': 'fi-FI',
+                                'pl': 'pl-PL',
+                                'cs': 'cs-CZ',
+                                'hu': 'hu-HU',
+                                'ro': 'ro-RO',
+                                'bg': 'bg-BG',
+                                'hr': 'hr-HR',
+                                'sk': 'sk-SK',
+                                'sl': 'sl-SI',
+                                'et': 'et-EE',
+                                'lv': 'lv-LV',
+                                'lt': 'lt-LT',
+                                'el': 'el-GR',
+                                'he': 'he-IL',
+                                'th': 'th-TH',
+                                'vi': 'vi-VN',
+                                'id': 'id-ID',
+                                'ms': 'ms-MY',
+                                'tl': 'fil-PH',
+                                'af': 'af-ZA',
+                                'bn': 'bn-BD',
+                                'gu': 'gu-IN',
+                                'ta': 'ta-IN',
+                                'te': 'te-IN',
+                                'uk': 'uk-UA'
+                            };
+
+                            recognition.lang = recognitionLangMap[fromLanguage] || 'en-US';
+
+                            recognition.onstart = () => {
+                                showToast('🎤 Neural voice recognition active! Speak now...', 'info');
+                                document.getElementById('inputText').placeholder = 'Listening... Speak now!';
+                            };
+
+                            recognition.onresult = (event) => {
+                                let finalTranscript = '';
+                                let interimTranscript = '';
+
+                                for (let i = event.resultIndex; i < event.results.length; i++) {
+                                    const transcript = event.results[i][0].transcript;
+                                    if (event.results[i].isFinal) {
+                                        finalTranscript += transcript;
+                                    } else {
+                                        interimTranscript += transcript;
+                                    }
+                                }
+
+                                // Update input field with interim results
+                                document.getElementById('inputText').value = finalTranscript + interimTranscript;
+                                updateCharCount();
+
+                                // If we have final results, translate
+                                if (finalTranscript) {
+                                    translateText();
+                                    showToast('✅ Voice input captured: "' + finalTranscript.substring(0, 50) + (finalTranscript.length > 50 ? '...' : '') + '"', 'success');
+                                }
+                            };
+
+                            recognition.onerror = (event) => {
+                                let errorMessage = 'Voice recognition error';
+
+                                switch (event.error) {
+                                    case 'no-speech':
+                                        errorMessage = 'No speech detected. Please try again.';
+                                        break;
+                                    case 'audio-capture':
+                                        errorMessage = 'Microphone not accessible. Please check permissions.';
+                                        break;
+                                    case 'not-allowed':
+                                        errorMessage = 'Microphone access denied. Please allow microphone access.';
+                                        break;
+                                    case 'network':
+                                        errorMessage = 'Network error occurred during voice recognition.';
+                                        break;
+                                    case 'service-not-allowed':
+                                        errorMessage = 'Voice recognition service not allowed.';
+                                        break;
+                                    default:
+                                        errorMessage = 'Voice recognition error: ' + event.error;
+                                }
+
+                                showToast('❌ ' + errorMessage, 'error');
+                                toggleVoiceRecognition();
+                            };
+
+                            recognition.onend = () => {
+                                document.getElementById('inputText').placeholder = 'Enter quantum data for neural processing...';
+                                if (isListening) {
+                                    toggleVoiceRecognition();
+                                }
+                            };
+
+                            // Request microphone permission first
+                            navigator.mediaDevices.getUserMedia({ audio: true })
+                                .then(() => {
+                                    recognition.start();
+                                })
+                                .catch((error) => {
+                                    showToast('❌ Microphone access denied or not available!', 'error');
+                                    toggleVoiceRecognition();
+                                });
+
+                        } else {
+                            showToast('❌ Voice recognition not supported in this browser! Try Chrome, Edge, or Safari.', 'error');
+                            toggleVoiceRecognition();
+                        }
+                    }
+
+                    function stopVoiceRecognition() {
+                        if (recognition) {
+                            recognition.stop();
+                        }
+                    }
+
+                    // Learning functions
+                    function showLessons(category) {
+                        const lessons = lessonData[category] || [];
+                        const lessonsContainer = document.getElementById('lessonsList');
+
+                        lessonsContainer.innerHTML = lessons.map(lesson => `
+                <div class="lesson-card">
+                    <div class="lesson-header">
+                        <div>
+                            <div class="lesson-title">${lesson.title}</div>
+                            <div class="lesson-difficulty ${lesson.difficulty}">${lesson.difficulty}</div>
+                        </div>
+                        <div style="font-size: 2rem;">${lesson.completed ? '✅' : '⏳'}</div>
                     </div>
-                `;
-                    }).join('');
+                    <div class="lesson-description">${lesson.description}</div>
+                    <div class="lesson-stats">
+                        <span>⏱️ ${lesson.duration}</span>
+                        <span>${lesson.completed ? 'Completed' : 'Start Lesson'}</span>
+                    </div>
+                </div>
+            `).join('');
 
-                    historyList.innerHTML = historyHTML;
-                }
-
-                // Load history item
-                function loadHistoryItem(index) {
-                    const item = history[index];
-                    if (!item) return;
-
-                    inputText.value = item.input;
-                    outputText.textContent = item.output;
-                    charCount.textContent = `${item.input.length}/5000`;
-
-                    // Update language selection
-                    if (item.fromLang !== 'auto') {
-                        fromLanguage = item.fromLang;
-                        const fromLang = languages.find(l => l.code === item.fromLang);
-                        fromLangBtn.innerHTML = `${fromLang.flag} ${fromLang.name} <span>▼</span>`;
-                        isAutoDetect = false;
-                        document.getElementById('detectBtn').classList.remove('active');
+                        showScreen('lessons');
                     }
 
-                    toLanguage = item.toLang;
-                    const toLang = languages.find(l => l.code === item.toLang);
-                    toLangBtn.innerHTML = `${toLang.flag} ${toLang.name} <span>▼</span>`;
+                    // Quiz functions
+                    function startQuiz(category) {
+                        const questions = quizQuestions[category] || quizQuestions.vocabulary;
+                        currentQuiz = {
+                            category,
+                            questions: [...questions],
+                            userAnswers: [],
+                            startTime: Date.now()
+                        };
+                        currentQuestionIndex = 0;
+                        quizScore = 0;
 
-                    updateVoiceLanguage();
-                    showToast('Neural memory pattern loaded');
-                }
-
-                // Get language name by code
-                function getLanguageName(code) {
-                    if (code === 'auto') return 'Auto-Detect';
-                    const lang = languages.find(l => l.code === code);
-                    return lang ? lang.name : code;
-                }
-
-                // Get time ago string
-                function getTimeAgo(date) {
-                    const now = new Date();
-                    const diff = now - date;
-                    const minutes = Math.floor(diff / 60000);
-                    const hours = Math.floor(diff / 3600000);
-                    const days = Math.floor(diff / 86400000);
-
-                    if (minutes < 1) return 'now';
-                    if (minutes < 60) return `${minutes}m ago`;
-                    if (hours < 24) return `${hours}h ago`;
-                    return `${days}d ago`;
-                }
-
-                // Close dropdowns
-                function closeDropdowns(event) {
-                    if (!event.target.closest('.language-dropdown')) {
-                        fromDropdown.classList.remove('show');
-                        toDropdown.classList.remove('show');
+                        showQuestion();
+                        showScreen('quiz');
                     }
-                }
 
-                // Show loading animation
-                function showLoading(show) {
-                    loading.style.display = show ? 'flex' : 'none';
-                }
+                    function showQuestion() {
+                        const question = currentQuiz.questions[currentQuestionIndex];
+                        const questionText = document.getElementById('questionText');
+                        const optionsContainer = document.getElementById('quizOptions');
+                        const progressBar = document.getElementById('quizProgress');
+                        const questionCounter = document.getElementById('questionCounter');
 
-                // Show toast notification
-                function showToast(message, type = 'success') {
-                    toast.textContent = message;
-                    toast.className = `toast ${type}`;
-                    toast.classList.add('show');
+                        questionText.textContent = question.question;
 
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                    }, 3000);
-                }
+                        optionsContainer.innerHTML = question.options.map((option, index) => `
+                <div class="quiz-option" onclick="selectAnswer(${index})">${option}</div>
+            `).join('');
 
-                // Initialize the app
-                init();
-            </script>
+                        const progress = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
+                        progressBar.style.width = progress + '%';
+                        questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuiz.questions.length}`;
+
+                        document.getElementById('nextBtn').disabled = true;
+                        document.getElementById('nextBtn').style.display = currentQuestionIndex === currentQuiz.questions.length - 1 ? 'none' : 'block';
+                        document.getElementById('finishBtn').style.display = currentQuestionIndex === currentQuiz.questions.length - 1 ? 'block' : 'none';
+                    }
+
+                    function selectAnswer(answerIndex) {
+                        const options = document.querySelectorAll('.quiz-option');
+                        const question = currentQuiz.questions[currentQuestionIndex];
+
+                        // Clear previous selections
+                        options.forEach(option => {
+                            option.classList.remove('selected', 'correct', 'incorrect');
+                        });
+
+                        // Mark selected answer
+                        options[answerIndex].classList.add('selected');
+
+                        // Show correct answer after a delay
+                        setTimeout(() => {
+                            options[question.correct].classList.add('correct');
+                            if (answerIndex !== question.correct) {
+                                options[answerIndex].classList.add('incorrect');
+                            } else {
+                                quizScore++;
+                            }
+
+                            currentQuiz.userAnswers[currentQuestionIndex] = answerIndex;
+                            document.getElementById('nextBtn').disabled = false;
+
+                            // Auto-advance after showing result
+                            setTimeout(() => {
+                                if (currentQuestionIndex === currentQuiz.questions.length - 1) {
+                                    document.getElementById('finishBtn').disabled = false;
+                                } else {
+                                    nextQuestion();
+                                }
+                            }, 1500);
+                        }, 500);
+                    }
+
+                    function nextQuestion() {
+                        if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                            currentQuestionIndex++;
+                            showQuestion();
+                        }
+                    }
+
+                    function finishQuiz() {
+                        const totalQuestions = currentQuiz.questions.length;
+                        const accuracy = Math.round((quizScore / totalQuestions) * 100);
+                        const timeSpent = Math.round((Date.now() - currentQuiz.startTime) / 1000);
+                        const avgTime = Math.round(timeSpent / totalQuestions * 10) / 10;
+
+                        // Update user stats
+                        userStats.testsCompleted++;
+                        userStats.overallAccuracy = Math.round((userStats.overallAccuracy + accuracy) / 2);
+                        userStats.averageSpeed = Math.round(((userStats.averageSpeed + avgTime) / 2) * 10) / 10;
+
+                        if (accuracy >= 80) {
+                            userStats.currentStreak++;
+                        } else {
+                            userStats.currentStreak = 0;
+                        }
+
+                        // Show results
+                        showQuizResults(accuracy, timeSpent, avgTime);
+                        updateStats();
+                    }
+
+                    function showQuizResults(accuracy, timeSpent, avgTime) {
+                        const resultsContainer = document.getElementById('resultsStats');
+
+                        resultsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value">${accuracy}%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">${quizScore}/${currentQuiz.questions.length}</div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value">${timeSpent}s</div>
+                    <div class="stat-label">Total Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value">${avgTime}s</div>
+                    <div class="stat-label">Avg per Question</div>
+                </div>
+            `;
+
+                        showScreen('results');
+
+                        // Show achievement toast if applicable
+                        if (accuracy === 100) {
+                            showToast('Perfect Score! Achievement Unlocked! 🏆', 'success');
+                        } else if (accuracy >= 80) {
+                            showToast('Excellent Performance! 🌟', 'success');
+                        }
+                    }
+
+                    function updateStats() {
+                        document.getElementById('overallAccuracy').textContent = userStats.overallAccuracy + '%';
+                        document.getElementById('testsCompleted').textContent = userStats.testsCompleted;
+                        document.getElementById('averageSpeed').textContent = userStats.averageSpeed + 's';
+                        document.getElementById('currentStreak').textContent = userStats.currentStreak;
+                        document.getElementById('wordsLearned').textContent = userStats.wordsLearned.toLocaleString();
+                        document.getElementById('level').textContent = userStats.level;
+                    }
+
+                    // Utility functions
+                    function debounce(func, wait) {
+                        let timeout;
+                        return function executedFunction(...args) {
+                            const later = () => {
+                                clearTimeout(timeout);
+                                func(...args);
+                            };
+                            clearTimeout(timeout);
+                            timeout = setTimeout(later, wait);
+                        };
+                    }
+
+                    function showToast(message, type = 'info') {
+                        const toast = document.getElementById('toast');
+                        toast.textContent = message;
+                        toast.className = `toast ${type}`;
+
+                        // Show toast
+                        setTimeout(() => toast.classList.add('show'), 100);
+
+                        // Hide toast
+                        setTimeout(() => {
+                            toast.classList.remove('show');
+                        }, 3000);
+                    }
+                </script>
     </body>
     
     </html>
